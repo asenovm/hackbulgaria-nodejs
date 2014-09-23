@@ -1,0 +1,6 @@
+{
+  "name": "beerAndFries",
+  "dependencies": {
+    "underscore": "~1.7.0"
+  }
+}
