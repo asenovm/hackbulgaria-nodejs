@@ -5,7 +5,6 @@ var http = require('http'),
     users = [];
 
 function requestHandler(req, res) {
-    console.log('url is' + req.url);
     if(req.method === 'GET') {
         if (req.url === '/all_chirps') {
             retrieveAllChirps(res);
@@ -85,7 +84,6 @@ function retrieveMyChirps(req, res) {
 }
 
 function retrieveAllChirps(res) {
-    console.log('retrieve all chirps is called!');
     sendSuccessResponse(res);
     res.end(JSON.stringify(chirps));
 }
