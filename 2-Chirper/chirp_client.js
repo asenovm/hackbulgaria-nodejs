@@ -42,7 +42,7 @@ if(args.register) {
         json: true,
         method: 'GET'
     }, function (err, res) {
-        console.log('get all err is ' + err);
+        console.log('err is ' + err);
         console.dir(res.body);
     });
 } else if(args.create) {
@@ -52,7 +52,7 @@ if(args.register) {
         method: 'POST',
         body: { user: config.user, key: config.key, chirpText: args.message }
     }, function (err, res) {
-        console.log('create err is ' + err);
+        console.log('err is ' + err);
         console.dir(res.body);
     });
 } else if(args.delete) {
@@ -62,7 +62,7 @@ if(args.register) {
         method: 'DELETE',
         body: { key: config.key, chirpId: args.chirpid }
     }, function (err, res) {
-        console.log('create err is ' + err);
+        console.log('err is ' + err);
         console.dir(res.body);
     });
 } else if(args.getself) {
@@ -71,7 +71,7 @@ if(args.register) {
         json: true,
         method: 'GET'
     }, function (err, res) {
-        console.log('get all err is ' + err);
+        console.log('err is ' + err);
         console.dir(res.body);
     });
 }

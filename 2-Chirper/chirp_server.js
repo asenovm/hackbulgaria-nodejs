@@ -32,7 +32,16 @@ function deleteChirp(req, res) {
             return chirp.id === id;
         });
 
-        chirps = _.difference(chirps, toDelete);
+        if(toDelete) {
+            chirps = _.difference(chirps, toDelete);
+            setSuccessResponse(res);
+        } else {
+            res.writeHead(403, 'Not found', {
+                'Content-Type': 'application/json'
+            });
+        }
+
+        res.end();
     });
 }
 
