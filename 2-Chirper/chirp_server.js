@@ -40,7 +40,7 @@ function registerUser(req, res) {
     readPayload(req, function (payload) {
         var user = JSON.parse(payload);
         user.key = createUniqueId();
-        sendSuccessResponse(res);
+        setSuccessResponse(res);
         res.end(JSON.stringify(user));
     });
 }
@@ -68,7 +68,7 @@ function createChirp(req, res) {
 
         chirps.push(chirp);
 
-        sendSuccessResponse(res);
+        setSuccessResponse(res);
         res.end(JSON.stringify(chirp));
     });
 }
@@ -79,16 +79,16 @@ function retrieveMyChirps(req, res) {
             return chirp.key === key;
         });
 
-    sendSuccessResponse(res);
+    setSuccessResponse(res);
     res.end(JSON.stringify(selfChirps));
 }
 
 function retrieveAllChirps(res) {
-    sendSuccessResponse(res);
+    setSuccessResponse(res);
     res.end(JSON.stringify(chirps));
 }
 
-function sendSuccessResponse(res) {
+function setSuccessResponse(res) {
     res.writeHead(200, 'OK', {
         'Content-Type': 'application/json'
     });
