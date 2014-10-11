@@ -22,18 +22,16 @@ function requestHandler(req, res) {
 }
 
 function deleteChirp(req, res) {
-    console.log('delete chirp is called');
+    readPayload(req, function (payload) {
+        var chirp = JSON.parse(payload),
+            id = chirp.chirpid,
+            key = chirp.key;
+    });
 }
 
 function registerUser(req, res) {
-    var postData = '';
-
-    req.on('data', function (chunk) {
-        postData += chunk;
-    });
-    
-    req.on('end', function () {
-        var user = JSON.parse(postData);
+    readPayload(req, function (payload) {
+        var user = JSON.parse(payload);
         user.key = createUniqueId();
         sendSuccessResponse(res);
         res.end(JSON.stringify(user));
@@ -44,8 +42,28 @@ function createUniqueId() {
     return node_uuid.v4();
 }
 
+function readPayload(req, callback) {
+    var payload = '';
+
+    req.on('data', function (chunk) {
+        payload += chunk;
+    });
+    
+    req.on('end', function () {
+        callback(payload);
+    });
+}
+
 function createChirp(req, res) {
-    console.log('create chirp is called!');
+    readPayload(req, function (payload) {
+        var chirp = JSON.parse(payload);
+        chirp.id = createUniqueId();
+
+        chirps.push(chirp);
+
+        sendSuccessResponse(res);
+        res.end(JSON.stringify(chirp));
+    });
 }
 
 function retrieveMyChirps(res) {
@@ -54,6 +72,7 @@ function retrieveMyChirps(res) {
 }
 
 function retrieveAllChirps(res) {
+    console.log('retrieve all chirps is called!');
     sendSuccessResponse(res);
     res.end(JSON.stringify(chirps));
 }
