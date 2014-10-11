@@ -19,6 +19,9 @@ parser.addArgument(['-d', '--delete'], {
     action: 'storeTrue'
 });
 parser.addArgument(['-cid', '--chirpid']);
+parser.addArgument(['-gs', '--getself'], {
+    action: 'storeTrue'
+});
 
 var args = parser.parseArgs();
 
@@ -40,7 +43,7 @@ if(args.register) {
         method: 'GET'
     }, function (err, res) {
         console.log('get all err is ' + err);
-        console.dir(res);
+        console.dir(res.body);
     });
 } else if(args.create) {
     request({
@@ -60,6 +63,15 @@ if(args.register) {
         body: { key: config.key, chirpId: args.chirpid }
     }, function (err, res) {
         console.log('create err is ' + err);
+        console.dir(res.body);
+    });
+} else if(args.getself) {
+    request({
+        url: config.api_url + '/my_chirps?key=' + config.key,
+        json: true,
+        method: 'GET'
+    }, function (err, res) {
+        console.log('get all err is ' + err);
         console.dir(res.body);
     });
 }

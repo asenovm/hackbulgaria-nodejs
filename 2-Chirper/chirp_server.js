@@ -1,14 +1,16 @@
 var http = require('http'),
     node_uuid = require('node-uuid'),
+    _ = require('underscore'),
     chirps = [],
     users = [];
 
 function requestHandler(req, res) {
+    console.log('url is' + req.url);
     if(req.method === 'GET') {
         if (req.url === '/all_chirps') {
             retrieveAllChirps(res);
-        } else if (req.url === '/my_chirps') {
-            retrieveMyChirps(res);
+        } else if (req.url.indexOf('/my_chirps') >= 0) {
+            retrieveMyChirps(req, res);
         }
     } else if(req.method === 'POST') {
         if(req.url === '/chirp') {
@@ -26,6 +28,12 @@ function deleteChirp(req, res) {
         var chirp = JSON.parse(payload),
             id = chirp.chirpid,
             key = chirp.key;
+
+        var toDelete = _.find(chirps, function (chirp) {
+            return chirp.id === id;
+        });
+
+        chirps = _.difference(chirps, toDelete);
     });
 }
 
@@ -66,9 +74,14 @@ function createChirp(req, res) {
     });
 }
 
-function retrieveMyChirps(res) {
+function retrieveMyChirps(req, res) {
+    var key = req.url.split('?')[1].split('=')[1],
+        selfChirps = _.filter(chirps, function (chirp) {
+            return chirp.key === key;
+        });
+
     sendSuccessResponse(res);
-    res.end(JSON.stringify(chirps));
+    res.end(JSON.stringify(selfChirps));
 }
 
 function retrieveAllChirps(res) {
