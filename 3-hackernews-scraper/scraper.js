@@ -2,7 +2,7 @@ var request = require('request'),
     db = require('./db'),
     API_END_POINT_MAX_ITEM = 'https://hacker-news.firebaseio.com/v0/maxitem.json',
     API_END_POINT_NEW_ARTICLES = 'http://localhost:3000/newArticles',
-    TIMEOUT_POLLING = 30000;
+    TIMEOUT_POLLING = 5000;
 
 startPolling();
 

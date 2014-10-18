@@ -7,6 +7,7 @@ storage.initSync();
 
 exports.writeArticle = function (article) {
     var articles = _fetchArticles();
+    article.isNew = true;
     articles.data.push(article);
     storage.setItem(KEY_ARTICLES, articles);
 };
@@ -28,11 +29,13 @@ exports.confirmSubscriber = function (subscriberId) {
             subscriber.id === subscriberId;
         });
     confirmedSubscriber.confirmed = true;
+    storage.setItem(KEY_SUBSCRIBERS, subscribers);
 };
 
-exports.addSubsriber = function (subscriber) {
+exports.addSubscriber = function (subscriber) {
     var subscribers = _fetchSubscribers();
     subscribers.data.push(subscriber);
+    storage.setItem(KEY_SUBSCRIBERS, subscribers);
 };
 
 exports.getSubscribers = function () {
@@ -42,9 +45,17 @@ exports.getSubscribers = function () {
 
 exports.getNewArticles = function () {
     var articles = _fetchArticles();
-    return _.filter(artices, function (article) {
+    return _.filter(articles.data, function (article) {
         return article.isNew;
     });
+};
+
+exports.markArticlesOld = function () {
+    var articles = _fetchArticles();
+    _.each(articles, function (article) {
+        article.isNew = false;
+    });
+    storage.setItem(KEY_ARTICLES, articles);
 };
 
 function _fetchArticles() {
