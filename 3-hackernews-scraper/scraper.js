@@ -1,6 +1,7 @@
-var db = require('./db'),
-    request = require('request'),
+var request = require('request'),
+    db = require('./db'),
     API_END_POINT_MAX_ITEM = 'https://hacker-news.firebaseio.com/v0/maxitem.json',
+    API_END_POINT_NEW_ARTICLES = 'http://localhost:3000/newArticles',
     TIMEOUT_POLLING = 30000;
 
 startPolling();
@@ -21,6 +22,10 @@ function fetchAndWriteArticles() {
             for(var i = maxItem; i <= newMaxItem; ++i) {
                 fetchAndWriteArticleWithId(i);
             }
+        }
+
+        if(maxItem !== newMaxItem) {
+            request.post(API_END_POINT_NEW_ARTICLES);
         }
     });
 }
