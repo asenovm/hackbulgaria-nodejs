@@ -9,13 +9,17 @@ exports.writeArticle = function (article) {
     var articles = _fetchArticles();
     article.isNew = true;
     articles.data.push(article);
+    console.log('write article and after ' + articles.data.length);
     storage.setItem(KEY_ARTICLES, articles);
+    storage.persistSync();
+    console.log('wrote to storage');
 };
 
 exports.setMaxItem = function (maxItem) {
     var articles = _fetchArticles();
     articles.maxItem = maxItem;
     storage.setItem(KEY_ARTICLES, articles);
+    storage.persistSync();
 };
 
 exports.getMaxItem = function () {
@@ -45,6 +49,7 @@ exports.getSubscribers = function () {
 
 exports.getNewArticles = function () {
     var articles = _fetchArticles();
+    console.log('get articles len is ' + articles.data.length);
     return _.filter(articles.data, function (article) {
         return article.isNew;
     });
@@ -52,7 +57,7 @@ exports.getNewArticles = function () {
 
 exports.markArticlesOld = function () {
     var articles = _fetchArticles();
-    _.each(articles, function (article) {
+    _.each(articles.data, function (article) {
         article.isNew = false;
     });
     storage.setItem(KEY_ARTICLES, articles);

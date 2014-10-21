@@ -1,32 +1,32 @@
 var express = require('express'),
     _ = require('underscore'),
     db = require('./db'),
+    bodyParser = require('body-parser'),
     email_sender = require('./email_sender'),
     app = express();
 
+app.use(bodyParser.json());
+
 app.post('/newArticles', function (req, res) {
     var subscribers = db.getSubscribers(),
-        newArticles = db.getNewArticles();
+        newArticles = req.body.articles;
+
+    console.log('new articles length is ' + newArticles.length);
 
     _.each(subscribers, function (subscriber) {
-        var subscriberArticles = _filterArticlesForSubscriber(newArticles, subscriber),
-            subscriptionText = '';
-        _.each(subscriberArticles, function (article) {
-            subscriptionText += 'https://news.ycombinator.com/item?id=' + article.id + '\n';
-        });
-
-        console.log('*********START***************');
-        console.log(subscriptionText);
-        console.log('**********END****************');
+        var filteredArticles = _filterArticlesForSubscriber(newArticles, subscriber);
+        console.log('filtered articles len is ' + filteredArticles.length);
     });
-
-    db.markArticlesOld();
 });
 
 function _filterArticlesForSubscriber(articles, subscriber) {
     var filteredArticles = [];
     _.each(subscriber.keywords, function (keyword) {
         _.each(articles, function (article) {
+            if(!article.text) {
+                console.log('article without text is');
+                console.dir(article);
+            }
             if(article.text.indexOf(keyword) >= 0 && !_.contains(filteredArticles, article)) {
                 filteredArticles.push(article);
             }

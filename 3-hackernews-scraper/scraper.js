@@ -16,23 +16,31 @@ function fetchAndWriteArticles() {
     request.get(API_END_POINT_MAX_ITEM, function (err, data, body) {
         var newMaxItem = parseInt(body, 10);
         db.setMaxItem(newMaxItem);
-        if(!maxItem) {
-            fetchAndWriteArticleWithId(newMaxItem);
-        } else {
-            for(var i = maxItem; i <= newMaxItem; ++i) {
-                fetchAndWriteArticleWithId(i);
-            }
-        }
-
         if(maxItem !== newMaxItem) {
-            request.post(API_END_POINT_NEW_ARTICLES);
+            fetchAndWriteArticleWithId(maxItem || newMaxItem, newMaxItem, function () {
+                var articles = db.getNewArticles();
+                request({
+                    url: API_END_POINT_NEW_ARTICLES,
+                    method: 'POST',
+                    json: true,
+                    body: { articles: articles }
+                });
+                db.markArticlesOld();
+            });
         }
     });
 }
 
-function fetchAndWriteArticleWithId(id) {
+function fetchAndWriteArticleWithId(id, maxId, callback) {
     request.get(_getApiEndPointForArticle(id), function (err, data, body) {
-        db.writeArticle(JSON.parse(body));
+        if(!err) {
+            db.writeArticle(JSON.parse(body));
+        }
+        if(id < maxId) {
+            fetchAndWriteArticleWithId(id + 1, maxId, callback);
+        } else {
+            callback();
+        }
     });
 }
 
