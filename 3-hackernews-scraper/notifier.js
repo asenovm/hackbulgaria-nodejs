@@ -11,29 +11,31 @@ app.post('/newArticles', function (req, res) {
     var subscribers = db.getSubscribers(),
         newArticles = req.body.articles;
 
-    console.log('new articles length is ' + newArticles.length);
-
     _.each(subscribers, function (subscriber) {
-        var filteredArticles = _filterArticlesForSubscriber(newArticles, subscriber);
-        console.log('filtered articles len is ' + filteredArticles.length);
+        var filteredArticles = _filterArticlesForSubscriber(newArticles, subscriber),
+            subscriptionText = '';
+
+        _.each(filteredArticles, function (article) {
+            subscriptionText += 'https://news.ycombinator.com/item?id=' + article.id + '\\n\\n';
+        });
+
+        if(subscriptionText) {
+            email_sender.sendMail(subscriber.email, subscriptionText);
+        }
     });
 });
 
 function _filterArticlesForSubscriber(articles, subscriber) {
     var filteredArticles = [];
-    _.each(subscriber.keywords, function (keyword) {
-        _.each(articles, function (article) {
-            if(!article.text) {
-                console.log('article without text is');
-                console.dir(article);
-            }
-            if(article.text.indexOf(keyword) >= 0 && !_.contains(filteredArticles, article)) {
-                filteredArticles.push(article);
-            }
-        });  
+    _.each(articles, function (article) {
+        if(article.type === 'story' && !_.contains(filteredArticles, article)) {
+            filteredArticles.push(article);
+        } else if(article.type === 'comment') {
+            //TODO
+        }
     });
 
-    return articles;
+    return filteredArticles;
 }
 
 app.listen(3000);
