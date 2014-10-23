@@ -16,23 +16,27 @@ app.post('/newArticles', function (req, res) {
             subscriptionText = '';
 
         _.each(filteredArticles, function (article) {
-            subscriptionText += 'https://news.ycombinator.com/item?id=' + article.id + '\\n\\n';
+            if(article.comment) {
+                subscriptionText += article.comment + '\n\n';
+                subscriptionText += 'https://news.ycombinator.com/item?id=' + article.id + '\n\n';
+            } else {
+                subscriptionText += 'https://news.ycombinator.com/item?id=' + article.id + '\n\n';
+            }
         });
 
         if(subscriptionText) {
             email_sender.sendMail(subscriber.email, subscriptionText);
-        }
+        
     });
+
+    res.end();
 });
 
 function _filterArticlesForSubscriber(articles, subscriber) {
     var filteredArticles = [];
     _.each(articles, function (article) {
-        if(article.type === 'story' && !_.contains(filteredArticles, article)) {
-            filteredArticles.push(article);
-        } else if(article.type === 'comment') {
-            //TODO
-        }
+        //TODO actually filter
+        filteredArticles.push(article);
     });
 
     return filteredArticles;

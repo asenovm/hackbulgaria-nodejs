@@ -1,5 +1,6 @@
 var request = require('request'),
     db = require('./db'),
+    _ = require('underscore'),
     API_END_POINT_MAX_ITEM = 'https://hacker-news.firebaseio.com/v0/maxitem.json',
     API_END_POINT_NEW_ARTICLES = 'http://localhost:3000/newArticles',
     TIMEOUT_POLLING = 1200000;
@@ -37,10 +38,10 @@ function fetchAndWriteArticleWithId(id, maxId, callback) {
     }
 
     request.get(_getApiEndPointForArticle(id), function (err, data, body) {
-        if(err || !body) {
+        var article = JSON.parse(body || {})
+        if(err || _.isEmpty(article) || article.error) {
             fetchAndWriteArticleWithId(id + 1, maxId, callback);
         } else {
-            var article = JSON.parse(body);
             if(article.type === "story") {
                 db.writeArticle(JSON.parse(body));
                 fetchAndWriteArticleWithId(id + 1, maxId, callback);
@@ -59,9 +60,8 @@ function fetchAndWriteComment(rootComment, currentComment, id, maxId, callback) 
             var article = JSON.parse(body);
             if(article.type === "story") {
                 article.comment = rootComment.text;
+                article.commentId = rootComment.id;
                 db.writeArticle(article);
-                console.log('hit article');
-                console.dir(article);
                 fetchAndWriteArticleWithId(id + 1, maxId, callback);
             } else if(article.type === "comment") {
                 fetchAndWriteComment(rootComment, article, id, maxId, callback);
