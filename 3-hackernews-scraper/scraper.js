@@ -2,7 +2,7 @@ var request = require('request'),
     db = require('./db'),
     API_END_POINT_MAX_ITEM = 'https://hacker-news.firebaseio.com/v0/maxitem.json',
     API_END_POINT_NEW_ARTICLES = 'http://localhost:3000/newArticles',
-    TIMEOUT_POLLING = 30000;
+    TIMEOUT_POLLING = 1200000;
 
 startPolling();
 
@@ -32,14 +32,40 @@ function fetchAndWriteArticles() {
 }
 
 function fetchAndWriteArticleWithId(id, maxId, callback) {
+    if(id > maxId) {
+        callback();
+    }
+
     request.get(_getApiEndPointForArticle(id), function (err, data, body) {
-        if(!err) {
-            db.writeArticle(JSON.parse(body));
-        }
-        if(id < maxId) {
+        if(err || !body) {
             fetchAndWriteArticleWithId(id + 1, maxId, callback);
         } else {
-            callback();
+            var article = JSON.parse(body);
+            if(article.type === "story") {
+                db.writeArticle(JSON.parse(body));
+                fetchAndWriteArticleWithId(id + 1, maxId, callback);
+            } else if (article.type === "comment") {
+                fetchAndWriteComment(article, article, id, maxId, callback);
+            }
+        }
+    });
+}
+
+function fetchAndWriteComment(rootComment, currentComment, id, maxId, callback) {
+    request(_getApiEndPointForArticle(currentComment.parent), function (err, data, body) {
+        if(err) {
+            fetchAndWriteArticleWithId(id + 1, maxId, callback);
+        } else {
+            var article = JSON.parse(body);
+            if(article.type === "story") {
+                article.comment = rootComment.text;
+                db.writeArticle(article);
+                console.log('hit article');
+                console.dir(article);
+                fetchAndWriteArticleWithId(id + 1, maxId, callback);
+            } else if(article.type === "comment") {
+                fetchAndWriteComment(rootComment, article, id, maxId, callback);
+            }
         }
     });
 }
