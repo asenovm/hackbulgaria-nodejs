@@ -47,6 +47,14 @@ exports.addSubscriber = function (subscriber) {
     storage.setItem(KEY_SUBSCRIBERS, subscribers);
 };
 
+exports.removeSubscriber = function (id) {
+    var subscribers = _fetchSubscribers();
+    subscribers.data = _.reject(subscribers.data, function (subscriber) {
+        return subscriber.id === id;
+    });
+    storage.setItem(KEY_SUBSCRIBERS, subscribers);
+};
+
 exports.getSubscribers = function () {
     var subscribers = _fetchSubscribers();
     return subscribers.data;

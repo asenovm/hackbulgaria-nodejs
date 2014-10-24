@@ -26,12 +26,16 @@ app.get('/confirm/:id', function (req, res) {
     if(db.hasSubscriber(id)) {
         db.confirmSubscriber(id);
     }
+    res.end();
 });
 
 app.post('/unsubscribe', function (req, res) {
-    console.log('unsubscribe method stub');
+    var id = req.body.subscriberId;
+    db.removeSubscriber(id);
+    res.end();
 });
 
 app.get('/listSubscribers', function (req, res) {
-    console.log('list subscribers method stub');
+    res.json(db.getSubscribers());
+    res.end();
 });
