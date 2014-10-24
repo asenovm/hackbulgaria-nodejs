@@ -15,6 +15,10 @@ app.post('/newArticles', function (req, res) {
         var filteredArticles = _filterArticlesForSubscriber(newArticles, subscriber),
             subscriptionText = '';
 
+        if(!subscriber.isConfirmed) {
+            return;
+        }
+
         _.each(filteredArticles, function (article) {
             if(article.comment) {
                 subscriptionText += article.comment + '\n\n';
@@ -34,9 +38,23 @@ app.post('/newArticles', function (req, res) {
 
 function _filterArticlesForSubscriber(articles, subscriber) {
     var filteredArticles = [];
+
     _.each(articles, function (article) {
-        //TODO actually filter
-        filteredArticles.push(article);
+        var include = false;
+
+        if(article.comment && _.contains(subscriber.type, "comment")) {
+            _.each(subscriber.keywords, function (keyword) {
+                include = include || (article.comment.indexOf(keyword) >= 0);
+            });
+        } else if(article.type === "story" && _.contains(subscriber.type, "story")) {
+            _.each(subscriber.keywords, function (keyword) {
+                include = include || (article.text.indexOf(keyword) >= 0 || article.title.indexOf(keyword) >= 0)
+            });
+        }
+
+        if(include) {
+            filteredArticles.push(article);
+        }
     });
 
     return filteredArticles;
