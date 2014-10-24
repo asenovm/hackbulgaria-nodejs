@@ -1,5 +1,6 @@
 var express = require('express'),
     bodyParser = require('body-parser'),
+    uuid = require('node-uuid'),
     db = require('./db'),
     app = express();
 
@@ -8,9 +9,23 @@ app.listen(3001);
 
 app.post('/subscribe', function (req, res) {
     var subscriber = req.body;
-    console.log('subscirber is ', subscriber);
+    subscriber.id = uuid.v4();
+    subscriber.isConfirmed = false;
+
     db.addSubscriber(subscriber);
+
+    res.json({
+        email: subscriber.email,
+        subscriberId: subscriber.id
+    });
     res.end();
+});
+
+app.get('/confirm/:id', function (req, res) {
+    var id = req.param('id');
+    if(db.hasSubscriber(id)) {
+        db.confirmSubscriber(id);
+    }
 });
 
 app.post('/unsubscribe', function (req, res) {

@@ -9,10 +9,8 @@ exports.writeArticle = function (article) {
     var articles = _fetchArticles();
     article.isNew = true;
     articles.data.push(article);
-    console.log('write article and after ' + articles.data.length);
     storage.setItem(KEY_ARTICLES, articles);
     storage.persistSync();
-    console.log('wrote to storage');
 };
 
 exports.setMaxItem = function (maxItem) {
@@ -27,12 +25,19 @@ exports.getMaxItem = function () {
     return articles.maxItem;
 };
 
+exports.hasSubscriber = function (id) {
+    var subscribers = _fetchSubscribers();
+    return _.find(subscribers.data, function (subscriber) {
+        return subscriber.id === id;
+    });
+};
+
 exports.confirmSubscriber = function (subscriberId) {
     var subscribers = _fetchSubscribers(),
-        confirmedSubscriber = _.find(subscribers, function (subscriber) {
+        confirmedSubscriber = _.find(subscribers.data, function (subscriber) {
             subscriber.id === subscriberId;
         });
-    confirmedSubscriber.confirmed = true;
+    confirmedSubscriber.isConfirmed = true;
     storage.setItem(KEY_SUBSCRIBERS, subscribers);
 };
 
