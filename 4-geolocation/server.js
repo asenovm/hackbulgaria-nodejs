@@ -3,6 +3,12 @@ var express = require('express'),
     app = express(),
     db = require('./db');
 
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
 app.use(bodyParser());
 
 app.post('/save', function (req, res) {
@@ -34,3 +40,13 @@ app.get('/find', function (req, res) {
 });
 
 app.listen(3000);
+
+var static = require('node-static');
+
+var file = new static.Server('.');
+
+require('http').createServer(function (request, response) {
+    request.addListener('end', function () {
+        file.serve(request, response);
+    }).resume();
+}).listen(8080);

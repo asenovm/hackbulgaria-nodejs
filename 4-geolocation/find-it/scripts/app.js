@@ -47,8 +47,12 @@ require(['jquery','async!http://maps.google.com/maps/api/js?sensor=false', 'jque
 
         $.get('http://localhost:3000/find', data)
             .done(function (response) {
-                console.log('success handler is called with response = ');
-                console.dir(response);
+                showPoints($.map(response, function (coord) {
+                    return {
+                        name: coord.name,
+                        coordinates: coord.loc.coordinates
+                    };
+                }));
             })
             .error(function (err) {
                 console.log('error handler is called with err = ');
