@@ -35,10 +35,13 @@ exports.hasSubscriber = function (id) {
 exports.confirmSubscriber = function (subscriberId) {
     var subscribers = _fetchSubscribers(),
         confirmedSubscriber = _.find(subscribers.data, function (subscriber) {
-            subscriber.id === subscriberId;
+            return subscriber.id === subscriberId;
         });
-    confirmedSubscriber.isConfirmed = true;
-    storage.setItem(KEY_SUBSCRIBERS, subscribers);
+
+    if(confirmedSubscriber) {
+        confirmedSubscriber.isConfirmed = true;
+        storage.setItem(KEY_SUBSCRIBERS, subscribers);
+    }
 };
 
 exports.addSubscriber = function (subscriber) {
@@ -62,7 +65,6 @@ exports.getSubscribers = function () {
 
 exports.getNewArticles = function () {
     var articles = _fetchArticles();
-    console.log('get articles len is ' + articles.data.length);
     return _.filter(articles.data, function (article) {
         return article.isNew;
     });

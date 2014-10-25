@@ -35,6 +35,7 @@ function fetchAndWriteArticles() {
 function fetchAndWriteArticleWithId(id, maxId, callback) {
     if(id > maxId) {
         callback();
+        return;
     }
 
     request.get(_getApiEndPointForArticle(id), function (err, data, body) {

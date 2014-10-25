@@ -2,6 +2,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     uuid = require('node-uuid'),
     db = require('./db'),
+    email_sender = require('./email_sender'),
     app = express();
 
 app.use(bodyParser.json());
@@ -13,6 +14,7 @@ app.post('/subscribe', function (req, res) {
     subscriber.isConfirmed = false;
 
     db.addSubscriber(subscriber);
+    email_sender.sendMail(subscriber.email, getConfirmationText(subscriber.id));
 
     res.json({
         email: subscriber.email,
@@ -39,3 +41,7 @@ app.get('/listSubscribers', function (req, res) {
     res.json(db.getSubscribers());
     res.end();
 });
+
+function getConfirmationText(id) {
+    return 'Please confirm your subscribtion at http://localhost:3001/confirm/' + id;
+}

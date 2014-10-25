@@ -6,10 +6,14 @@ request({
     body: {
         email: 'asenov.m@gmail.com',
         keywords: [
-            "linux",
-            "coffee"
+            "I",
+            "the",
+            "have",
+            "had",
+            "on",
+            "to"
         ],
-        type: ['story']
+        type: ['story', 'comment']
     }
 }, function (err, res, body) {
     console.log('err is');
