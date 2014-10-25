@@ -29,8 +29,15 @@ require(['jquery','async!http://maps.google.com/maps/api/js?sensor=false', 'jque
             return;
         }
 
-        // *** Insert the save logic here ***
-        alert(JSON.stringify(data, null, 4));
+        $.post('http://localhost:3000/save', data)
+            .done(function (response) {
+                console.log('success handler is called with response = ');
+                console.dir(response);
+            })
+            .error(function (err) {
+                console.log('error handler is called with err = ');
+                console.dir(err);
+            });
     }
 
     function initialize() {
