@@ -10,8 +10,13 @@ app.post('/save', function (req, res) {
         position = req.body.position,
         tags = req.body.tags;
 
-    db.save(name, tags, position);
-    res.end();
+    db.save(name, tags, position, function (err, result) {
+        if(err) {
+            res.status(500).end();
+        } else {
+            res.end();
+        }
+    });
 });
 
 app.get('/find', function (req, res) {
@@ -19,11 +24,13 @@ app.get('/find', function (req, res) {
         tags = req.query.tags,
         range = req.query.range;
 
-    console.log('position is ', position);
-    console.log('tags are ', tags);
-    console.log('range is ', range);
-
-    db.find(position, range, tags);
+    db.find(position, range, tags, function (err, result) {
+        if(err) {
+            res.status(500).end();
+        } else {
+            res.json(result).end();
+        }
+    });
 });
 
 app.listen(3000);

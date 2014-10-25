@@ -14,7 +14,7 @@ MongoClient.connect(DB_URL, function (err, db) {
     });
 });
 
-exports.save = function (name, tags, position) {
+exports.save = function (name, tags, position, callback) {
     var places = dbInstance.collection('places');
     places.insert({ 
         name: name,
@@ -23,14 +23,10 @@ exports.save = function (name, tags, position) {
             type: 'Point',
             coordinates: [ parseFloat(position.lng, 10), parseFloat(position.lat, 10) ]
         }
-    }, function (err, result) {
-        if(err) {
-            console.log(err);
-        }
-    });
+    }, callback);
 };
 
-exports.find = function (position, range, tags) {
+exports.find = function (position, range, tags, callback) {
     var places = dbInstance.collection('places');
     places.find({
         loc: {
@@ -46,7 +42,5 @@ exports.find = function (position, range, tags) {
         tags: {
             $all: tags
         }
-    }).toArray(function (err, docs) {
-        console.log('docs are ', docs);
-    });
+    }).toArray(callback);
 };
