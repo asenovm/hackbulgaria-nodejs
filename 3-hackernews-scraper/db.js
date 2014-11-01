@@ -1,9 +1,29 @@
 var storage = require('node-persist'),
     _ = require('underscore'),
+    KEY_HISTOGRAM_ARTICLE_ID = 'histogram_article_id.json',
     KEY_ARTICLES = 'articles.json',
+    KEY_TEXT = 'text.json',
     KEY_SUBSCRIBERS = 'subscribers.json';
 
 storage.initSync();
+
+exports.getText = function () {
+    return storage.getItem(KEY_TEXT) || "";
+};
+
+exports.writeText = function (text) {
+    var currentText = storage.getItem(KEY_TEXT) || "";
+    storage.setItem(KEY_TEXT, currentText + text);
+    storage.persistSync();
+};
+
+exports.getLastFetchedArticleId = function () {
+    return storage.getItem(KEY_HISTOGRAM_ARTICLE_ID) || 0;
+};
+
+exports.writeLastFetchedArticleId = function (id) {
+    storage.setItem(KEY_HISTOGRAM_ARTICLE_ID, id);
+};
 
 exports.writeArticle = function (article) {
     var articles = _fetchArticles();

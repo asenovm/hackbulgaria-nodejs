@@ -1,8 +1,7 @@
 var request = require('request'),
     db = require('./db'),
     _ = require('underscore'),
-    API_END_POINT_MAX_ITEM = 'https://hacker-news.firebaseio.com/v0/maxitem.json',
-    API_END_POINT_NEW_ARTICLES = 'http://localhost:3000/newArticles',
+    endPoints = require('./endPoints'),
     TIMEOUT_POLLING = 1200000;
 
 startPolling();
@@ -14,14 +13,14 @@ function startPolling() {
 
 function fetchAndWriteArticles() {
     var maxItem = db.getMaxItem();
-    request.get(API_END_POINT_MAX_ITEM, function (err, data, body) {
+    request.get(endPoints.API_END_POINT_MAX_ITEM, function (err, data, body) {
         var newMaxItem = parseInt(body, 10);
         db.setMaxItem(newMaxItem);
         if(maxItem !== newMaxItem) {
             fetchAndWriteArticleWithId((maxItem + 1) || newMaxItem, newMaxItem, function () {
                 var articles = db.getNewArticles();
                 request({
-                    url: API_END_POINT_NEW_ARTICLES,
+                    url: endPoints.API_END_POINT_NEW_ARTICLES,
                     method: 'POST',
                     json: true,
                     body: { articles: articles }
@@ -38,7 +37,7 @@ function fetchAndWriteArticleWithId(id, maxId, callback) {
         return;
     }
 
-    request.get(_getApiEndPointForArticle(id), function (err, data, body) {
+    request.get(endPoints.getApiEndPointForArticle(id), function (err, data, body) {
         var article = JSON.parse(body || {})
         if(err || _.isEmpty(article) || article.error) {
             fetchAndWriteArticleWithId(id + 1, maxId, callback);
@@ -54,7 +53,7 @@ function fetchAndWriteArticleWithId(id, maxId, callback) {
 }
 
 function fetchAndWriteComment(rootComment, currentComment, id, maxId, callback) {
-    request(_getApiEndPointForArticle(currentComment.parent), function (err, data, body) {
+    request(endPoints.getApiEndPointForArticle(currentComment.parent), function (err, data, body) {
         if(err) {
             fetchAndWriteArticleWithId(id + 1, maxId, callback);
         } else {
@@ -69,8 +68,4 @@ function fetchAndWriteComment(rootComment, currentComment, id, maxId, callback) 
             }
         }
     });
-}
-
-function _getApiEndPointForArticle(id) {
-    return 'https://hacker-news.firebaseio.com/v0/item/' + id + '.json'
 }
