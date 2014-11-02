@@ -1,0 +1,23 @@
+{
+  "name": "4-geolocation",
+  "version": "0.0.0",
+  "description": "Geospatial indexes in mongo allow us to make \"geo requests\" to our data such as:",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "~1.9.1",
+    "express": "~4.10.0",
+    "mongodb": "~1.4.19",
+    "node-static": "~0.7.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asenovm/hackbulgaria-nodejs/tree/master/4-geolocation"
+  },
+  "author": "Martin Asenov",
+  "license": "ISC"
+}
