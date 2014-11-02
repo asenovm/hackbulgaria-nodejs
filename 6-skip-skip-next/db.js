@@ -6,6 +6,7 @@ var MongoClient = require('mongodb').MongoClient,
     KEY_TEXT = 'text',
     KEY_SUBSCRIBERS = 'subscribers',
     KEY_MAX_ITEM = "maxItem",
+    KEY_KEYWORDS = 'keywords',
     dbInstance;
 
 MongoClient.connect(DB_URL, function (err, db) {
@@ -17,23 +18,35 @@ function errorHandlingCallback(err, result) {
     if(err) {
         console.error(err);
     }
-    console.dir(result);
 }
 
-exports.getText = function (callback) {
-    dbInstance.collection(KEY_TEXT).find({}).toArray(callback);
+exports.writeKeywords = function (keywords, callback) {
+    var collection = dbInstance.collection(KEY_KEYWORDS);
+    _.each(keywords, function (value, key) {
+        collection.update({ keyword: key }, { $inc: { count: value }}, { upsert: true }, callback);
+    });
 };
 
-exports.writeText = function (text) {
-    var textCollection = dbInstance.collection(KEY_TEXT);
-    textCollection.findOne({}, function (err, result) {
-        textCollection.update({}, { $set: { text: (result || '') + text }}, { upsert: true }, errorHandlingCallback);
+exports.getKeywords = function (fromPosition, direction, callback) {
+    var collection = dbInstance.collection(KEY_KEYWORDS),
+        offset = direction === 'prev' ? - 20 : 0,
+        skipCount = Math.max(0, fromPosition + offset);
+    
+    collection.find().sort({ count :  -1 }).skip(skipCount).limit(10).toArray(function (err, result) {
+        if(result) {
+            callback(err, _.map(result, function (keyword, index) {
+                keyword.rank = skipCount + index + 1;
+                return keyword;
+            }));
+        } else {
+            callback(err, result);
+        }
     });
 };
 
 exports.getLastFetchedArticleId = function (callback) {
     dbInstance.collection(KEY_HISTOGRAM_ARTICLE_ID).findOne({}, function (err, result) {
-        callback(err, result.id || 0);
+        callback(err, (result && result.id) || 1);
     });
 };
 
@@ -61,13 +74,10 @@ exports.getSubscriber = function (id, callback) {
 };
 
 exports.confirmSubscriber = function (subscriberId) {
-    console.log('confirm!');
     dbInstance.collection(KEY_SUBSCRIBERS).update({ id: subscriberId }, { $set: { isConfirmed: true }}, errorHandlingCallback);
 };
 
 exports.addSubscriber = function (subscriber) {
-    console.log('add subscriber with ');
-    console.dir(subscriber);
     dbInstance.collection(KEY_SUBSCRIBERS).insert(subscriber, errorHandlingCallback);
 };
 

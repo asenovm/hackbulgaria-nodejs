@@ -21,6 +21,10 @@ require(["jquery", "handlebars", "bootstrap"], function($, Handlebars) {
   "use strict";
 
   function reloadUI(data) {
+    if(!data.length) {
+        return;
+    }
+
     var
       templateString = $("#table-template").html(),
       compiledTemplate = Handlebars.compile(templateString),
@@ -34,7 +38,7 @@ require(["jquery", "handlebars", "bootstrap"], function($, Handlebars) {
   function fetchKeywords(data, cb) {
     $.ajax({
       type: "GET",
-      url: "http://localhost:8000/keywords",
+      url: "http://localhost:3003/keywords",
       data: data
     })
     .done(function(keywords) {
@@ -54,5 +58,8 @@ require(["jquery", "handlebars", "bootstrap"], function($, Handlebars) {
     });
   });
 
-  reloadUI();
+  fetchKeywords({
+    fromPosition: 0,
+    direction: 'next'
+  }, reloadUI);
 });
