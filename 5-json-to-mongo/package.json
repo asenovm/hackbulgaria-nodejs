@@ -1,0 +1,19 @@
+{
+  "name": "5-json-to-mongo",
+  "version": "0.0.0",
+  "description": "We are going to warm-up with a very simple task - a node script that reads JSON files are arguments and import them in mongo collections.",
+  "main": "json-to-mongo.js",
+  "dependencies": {
+    "mongodb": "~1.4.19"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node json-to-mongo.js people.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asenovm/hackbulgaria-nodejs/tree/master/5-json-to-mongo"
+  },
+  "author": "Martin Asenov",
+  "license": "ISC"
+}
