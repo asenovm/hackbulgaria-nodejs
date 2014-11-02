@@ -1,0 +1,22 @@
+{
+  "name": "2-chirper",
+  "version": "0.0.0",
+  "description": "Using the `http` module write a Chirpr(über innovative naming right there!) - a twitter-like service.",
+  "main": "chirp_server.js",
+  "dependencies": {
+    "argparse": "~0.1.15",
+    "node-uuid": "~1.4.1",
+    "request": "~2.45.0",
+    "underscore": "~1.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node chirp_server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asenovm/hackbulgaria-nodejs/tree/master/2-chirper"
+  },
+  "author": "Martin Asenov",
+  "license": "ISC"
+}
