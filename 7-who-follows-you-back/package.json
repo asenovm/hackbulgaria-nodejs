@@ -1,0 +1,28 @@
+{
+  "name": "7-who-follows-you-back",
+  "version": "0.0.0",
+  "description": "## Graph module",
+  "main": "graph.js",
+  "scripts": {
+    "test": "node graph.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HackBulgaria/NodeJS-1/tree/master/week3/1-Who-Follows-You-Back"
+  },
+  "author": "Martin Asenov",
+  "license": "ISC",
+  "dependencies": {
+    "jasmine": "~2.0.1",
+    "chai": "~1.9.2",
+    "express": "~4.10.1",
+    "body-parser": "~1.9.2",
+    "request": "~2.47.0",
+    "mongo": "~0.1.0",
+    "mongodb": "~1.4.19",
+    "uuid": "~2.0.1",
+    "node-github": "0.0.3",
+    "github": "~0.2.2",
+    "underscore": "~1.7.0"
+  }
+}
