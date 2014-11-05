@@ -1,0 +1,5 @@
+{
+    "dbURL": "mongodb://localhost:7275/github",
+    "clientId": "f43beb9407c56dcb402b",
+    "clientSecret": "1a162753b43f09a00aae4a215876eb83137e6edc"
+}

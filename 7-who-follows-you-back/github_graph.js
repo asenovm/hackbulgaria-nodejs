@@ -5,13 +5,13 @@ var express = require('express'),
     mongo = require('mongodb'),
     _ = require('underscore'),
     MongoClient = mongo.MongoClient,
-    BSON = mongo.BSONPure,
+    ObjectID = mongo.BSONPure.ObjectID,
+    config = JSON.parse(fs.readFileSync('config.json')),
     GITHUB_API_URL = 'https://api.github.com',
-    DB_URL = 'mongodb://localhost:7275/github', db,
     COLLECTION_GRAPHS = 'graphs',
-    app = express();
+    app = express(), db;
 
-MongoClient.connect(DB_URL, function (err, dbInstance) {
+MongoClient.connect(config.dbURL, function (err, dbInstance) {
     db = dbInstance;
 });
 
@@ -33,7 +33,7 @@ app.post('/createGraphFor', function (req, res) {
 
             var graph = new Graph();
             getFollowingForDepth(graph, username, depth, function (err, graph) {
-                graphs.update({ _id: new BSON.ObjectID(result[0]._id) }, { $set: { graph: graph.toString() }}, function (err, updated) {
+                graphs.update({ _id: new ObjectID(result[0]._id) }, { $set: { graph: graph.toString() }}, function (err, updated) {
                     if(err) {
                         console.dir(err);
                     }
@@ -48,7 +48,7 @@ app.get('/graph/:id', function (req, res) {
     var id = req.param('id'),
         graphs = db.collection(COLLECTION_GRAPHS);
 
-    graphs.findOne({ _id: new BSON.ObjectID(id) }, function (err, result) {
+    graphs.findOne({ _id: new ObjectID(id) }, function (err, result) {
         if(result.graph) {
             res.json(result.graph);
         } else {
@@ -64,7 +64,7 @@ app.get('/mutually_follow/:id/:username', function (req, res) {
         username = req.param('username'),
         graphs = db.collection(COLLECTION_GRAPHS);
 
-    graphs.findOne({ _id: new BSON.ObjectID(id) }, function (err, result) {
+    graphs.findOne({ _id: new ObjectID(id) }, function (err, result) {
         if(result.graph) {
             var graph = new Graph(JSON.parse(result.graph)),
                 fromAuthorToUsername = _.contains(graph.getNeighboursFor(result.username), username),
@@ -101,18 +101,17 @@ function getFollowingForDepth(graph, username, depth, callback, isLast) {
         if(err) {
             callback(err, false);
         } else {
-            console.dir(data.headers);
             var following = JSON.parse(body);
-            for(var i = 0; i < following.length; ++i) {
-                graph.addEdge(username, following[i].login);
-                getFollowingForDepth(graph, following[i].login, depth - 1, callback, (i === following.length - 1));
-            }
+            _.each(following, function (followee, i) {
+                graph.addEdge(username, followee.login);
+                getFollowingForDepth(graph, followee.login, depth - 1, callback, (i === following.length - 1));
+            });
         }
     });
 }
 
 function getApiUrl(path) {
-    return GITHUB_API_URL + path + '?client_id=f43beb9407c56dcb402b&client_secret=1a162753b43f09a00aae4a215876eb83137e6edc';
+    return GITHUB_API_URL + path + '?client_id=' + config.clientId + '&client_secret=' + config.clientSecret;
 }
 
 app.listen(8080);
