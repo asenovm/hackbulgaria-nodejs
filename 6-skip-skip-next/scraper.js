@@ -13,15 +13,11 @@ function startPolling() {
 
 function fetchAndWriteArticles() {
     db.getMaxItem(function (err, maxItem) {
-        console.log('get max item is with ');
-        console.dir(err);
-        console.dir(maxItem);
         request.get(endPoints.API_END_POINT_MAX_ITEM, function (err, data, body) {
             var newMaxItem = parseInt(body, 10);
             db.setMaxItem(newMaxItem);
             if(maxItem !== newMaxItem) {
                 fetchAndWriteArticleWithId((maxItem + 1) || newMaxItem, newMaxItem, function () {
-                    console.log('fetched all articles, moving on!');
                     request({
                         url: endPoints.API_END_POINT_NEW_ARTICLES,
                         method: 'POST'

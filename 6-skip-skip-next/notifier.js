@@ -8,10 +8,7 @@ var express = require('express'),
 app.use(bodyParser.json());
 
 app.post('/newArticles', function (req, res) {
-    console.log('new articles triggered');
     db.getNewArticles(function (err, articles) {
-        console.log('new articles are');
-        console.dir(articles);
         db.getSubscribers(function (err, subscribers) {
 
             _.each(subscribers, function (subscriber) {
@@ -31,7 +28,6 @@ app.post('/newArticles', function (req, res) {
                     }
                 });
 
-                console.log('subscriptionText is ' + subscriptionText);
                 if(subscriptionText) {
                     email_sender.sendMail(subscriber.email, subscriptionText);
                 }

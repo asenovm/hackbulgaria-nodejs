@@ -27,11 +27,7 @@ app.get('/confirm/:id', function (req, res) {
     var id = req.param('id');
     db.getSubscriber(id, function (err, subscriber) {
 
-        console.log('got subscriber with ');
-        console.dir(subscriber);
-
         if(subscriber) {
-            console.log('about to confirm');
             db.confirmSubscriber(id);
             res.end();
         }
