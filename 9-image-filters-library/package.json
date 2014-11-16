@@ -1,0 +1,15 @@
+{
+  "name": "9-image-filters-library",
+  "version": "0.0.0",
+  "description": "We want to create a node module for applying simple image processing with convolution, defined with a [kernel](https://en.wikipedia.org/wiki/Kernel_%28image_processing%29). We want our module's API to be implemented with a promise interface.",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asenovm/hackbulgaria-nodejs/tree/master/9-image-filters-library"
+  },
+  "author": "Martin Asenov",
+  "license": "ISC"
+}
