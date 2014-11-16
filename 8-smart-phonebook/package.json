@@ -26,6 +26,7 @@
     "nodeunit": "~0.9.0",
     "request": "~2.48.0",
     "body-parser": "~1.9.2",
-    "underscore": "~1.7.0"
+    "underscore": "~1.7.0",
+    "levenshtein": "~1.0.5"
   }
 }

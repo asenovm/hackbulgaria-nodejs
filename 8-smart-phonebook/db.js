@@ -1,5 +1,6 @@
 var mongo = require('mongodb'),
     _ = require('underscore'),
+    Levenshtein = require('levenshtein'),
     ObjectID = mongo.BSONPure.ObjectID,
     MongoClient = mongo.MongoClient, db,
     COLLECTION_CONTACTS = 'contacts',
@@ -48,12 +49,25 @@ function updateGroupsForContact(contact) {
         _.each(contacts, function (oldContact) {
             var currentContactTokens = tokenize(oldContact.name),
                 intersection = _.intersection(newContactTokens, currentContactTokens);
-            _.each(intersection, function (group) {
-                groups.update({ groupName: group }, { $push: { contacts: contact }}, { upsert: true }, function (err, result) {
-                    if (err) {
-                        console.log('error add group', err);
-                    } else {
-                        console.log('added / updated group ', result);
+            _.each(newContactTokens, function (newContactToken) {
+                _.each(currentContactTokens, function (currentContactToken) {
+                    var l = new Levenshtein(newContactToken, currentContactToken);
+                    if (l.distance === 0) {
+                        groups.update({ groupName: currentContactToken }, { $push: { contacts: contact }}, { upsert: true }, function (err, result) {
+                            if (err) {
+                                console.log('error add group', err);
+                            } else {
+                                console.log('added / updated group ', result);
+                            }
+                        });
+                    } else if (l.distance <= 2) {
+                        groups.update({ groupName: [currentContactToken, newContactToken] }, { $set: { type: 'fuzzy' }, $push: { contacts: contact }}, { upsert: true }, function (err, result) {
+                            if (err) {
+                                console.log('error add group', err);
+                            } else {
+                                console.log('added / updated group ', result);
+                            }
+                        });
                     }
                 });
             });
