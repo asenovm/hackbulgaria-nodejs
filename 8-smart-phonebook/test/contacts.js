@@ -1,5 +1,7 @@
 var request = require('request');
 
+//XXX this should actually clear the whole db before each test and then create some fixture
+
 exports.testCreateContact = function (test) {
     request({
         url: 'http://localhost:8080/contacts',
@@ -60,4 +62,15 @@ exports.testDeleteContact = function (test) {
             test.done();
         });
     });
-}
+};
+
+exports.testRetrieveAllGroups = function (test) {
+    request({
+        url: 'http://localhost:8080/groups',
+        method: 'GET',
+        json: true
+    }, function (res, data, body) {
+        test.ok(body.length >= 1);
+        test.done();
+    });
+};

@@ -41,11 +41,7 @@ app.delete('/contacts/:id', function (req, res) {
 });
 
 app.get('/groups', function (req, res) {
-    db.retrieveAllGroups(function (err, result) {
-        if(err) {
-        
-        }
-    });
+    db.retrieveAllGroups(genericDbHandler(res));
 });
 
 function genericDbHandler (response) {
