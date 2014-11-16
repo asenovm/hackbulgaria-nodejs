@@ -18,26 +18,12 @@ app.post('/contacts', function (req, res) {
 });
 
 app.get('/contacts',  function (req, res) {
-    db.retrieveAllContacts(function (err, result) {
-        if(err) {
-            res.status(500).end();
-        } else {
-            res.json(result);
-            res.end();
-        }
-    });
+    db.retrieveAllContacts(genericDbHandler(res));
 });
 
 app.get('/contacts/:id', function (req, res) {
     var id = req.param('id');
-    db.retrieveContact(id, function (err, result) {
-        if (err) {
-            res.status(500).end();
-        } else {
-            res.json(result);
-            res.end();
-        }
-    });
+    db.retrieveContact(id, genericDbHandler(res));
 });
 
 app.delete('/contacts/:id', function (req, res) {
@@ -51,5 +37,24 @@ app.delete('/contacts/:id', function (req, res) {
         }
     });
 });
+
+app.get('/groups', function (req, res) {
+    db.retrieveAllGroups(function (err, result) {
+        if(err) {
+        
+        }
+    });
+});
+
+function genericDbHandler (response) {
+    return function (err, result) {
+        if (err) {
+            response.status(500).end();
+        } else {
+            response.json(result);
+            response.end();
+        }
+    };
+}
 
 app.listen(8080);
