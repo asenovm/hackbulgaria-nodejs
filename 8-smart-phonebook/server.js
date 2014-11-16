@@ -30,14 +30,26 @@ app.get('/contacts',  function (req, res) {
 
 app.get('/contacts/:id', function (req, res) {
     var id = req.param('id');
-    console.log('retrieve contact with id = ' + id);
-    res.end();
+    db.retrieveContact(id, function (err, result) {
+        if (err) {
+            res.status(500).end();
+        } else {
+            res.json(result);
+            res.end();
+        }
+    });
 });
 
 app.delete('/contacts/:id', function (req, res) {
     var id = req.param('id');
-    console.log('deleting contact with id = ' + id);
-    res.end();
+    db.deleteContact(id, function (err, deletedRows) {
+        if (err) {
+            res.status(500).end();
+        } else {
+            res.json({ deleted: deletedRows });
+            res.end();
+        }
+    });
 });
 
 app.listen(8080);

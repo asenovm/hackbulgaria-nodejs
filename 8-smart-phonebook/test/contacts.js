@@ -24,3 +24,39 @@ exports.testRetrieveAllContacts = function (test) {
         test.done();
     });
 };
+
+exports.testRetrieveContact = function (test) {
+    request({
+        url: 'http://localhost:8080/contacts',
+        method: 'GET',
+        json: true
+    }, function (res, data, body) {
+        var contact = body[0];
+        request({
+            url: 'http://localhost:8080/contacts/' + contact._id,
+            method: 'GET',
+            json: true
+        }, function (res, data, body) {
+            test.ok(body._id);
+            test.done();
+        });
+    });
+};
+
+exports.testDeleteContact = function (test) {
+    request({
+        url: 'http://localhost:8080/contacts',
+        method: 'GET',
+        json: true
+    }, function (res, data, body) {
+        var contact = body[0];
+        request({
+            url: 'http://localhost:8080/contacts/' + contact._id,
+            method: 'DELETE',
+            json: true
+        }, function (res, data, body) {
+            test.ok(body.deleted >= 1);
+            test.done();
+        });
+    });
+}
