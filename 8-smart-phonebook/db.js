@@ -14,8 +14,9 @@ exports.deleteContact = function (id) {
     console.log('deleting contact = ', id);
 };
 
-exports.retrieveAllContacts = function () {
-    console.log('retrieve all contacts!');
+exports.retrieveAllContacts = function (callback) {
+    var contacts = db.collection('contacts');
+    contacts.find({}).toArray(callback);
 };
 
 exports.retrieveContact = function (id) {

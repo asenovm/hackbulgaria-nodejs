@@ -18,8 +18,14 @@ app.post('/contacts', function (req, res) {
 });
 
 app.get('/contacts',  function (req, res) {
-    console.log('retrieve all contacts');
-    res.end();
+    db.retrieveAllContacts(function (err, result) {
+        if(err) {
+            res.status(500).end();
+        } else {
+            res.json(result);
+            res.end();
+        }
+    });
 });
 
 app.get('/contacts/:id', function (req, res) {
@@ -28,7 +34,7 @@ app.get('/contacts/:id', function (req, res) {
     res.end();
 });
 
-app.del('/contacts/:id', function (req, res) {
+app.delete('/contacts/:id', function (req, res) {
     var id = req.param('id');
     console.log('deleting contact with id = ' + id);
     res.end();

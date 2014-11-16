@@ -13,3 +13,14 @@ exports.testCreateContact = function (test) {
         test.done();
     });
 };
+
+exports.testRetrieveAllContacts = function (test) {
+    request({
+        url: 'http://localhost:8080/contacts',
+        method: 'GET',
+        json: true
+    }, function (res, data, body) {
+        test.ok(body.length > 0);
+        test.done();
+    });
+};
