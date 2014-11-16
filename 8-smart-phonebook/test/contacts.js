@@ -6,7 +6,8 @@ exports.testCreateContact = function (test) {
         method: 'POST',
         json: true,
         body: {
-            phoneNumber: '123456789'
+            phoneNumber: '123456789',
+            name: 'Martin Asenov'
         }
     }, function (res, data, body) {
         test.ok(body._id);

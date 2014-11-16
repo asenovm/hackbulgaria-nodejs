@@ -6,8 +6,10 @@ var express = require('express'),
 app.use(bodyParser.json());
 
 app.post('/contacts', function (req, res) {
-    var number = req.phoneNumber;
-    db.createContact({ number: number }, function (err, result) {
+    var number = req.body.phoneNumber,
+        name = req.body.name;
+
+    db.createContact({ number: number, name: name }, function (err, result) {
         if(err) {
             res.status(500).end();
         } else {
